@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 import bcrypt
 import jwt
@@ -31,7 +32,7 @@ def create_access_token(user_id: int) -> str:
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
 
-def decode_access_token(token: str) -> int | None:
+def decode_access_token(token: str) -> Optional[int]:
     try:
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
         return int(payload.get("sub"))
@@ -42,7 +43,7 @@ def decode_access_token(token: str) -> int | None:
 # ---------- FastAPI dependencies ----------
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> models.User:
     """Require a valid Bearer token. Raises 401 if missing/invalid."""
@@ -60,9 +61,9 @@ def get_current_user(
 
 
 def get_current_user_optional(
-    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
-) -> models.User | None:
+) -> Optional[models.User]:
     """Like get_current_user, but returns None instead of raising when unauthenticated."""
     if credentials is None:
         return None

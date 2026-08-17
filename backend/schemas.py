@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -38,12 +39,12 @@ class BookResult(BaseModel):
     title: str
     authors: str
     published_date: str
-    thumbnail: str | None = None
+    thumbnail: Optional[str] = None
     description: str
     info_link: str
-    categories: str | None = None
-    page_count: int | None = None
-    average_rating: float | None = None
+    categories: Optional[str] = None
+    page_count: Optional[int] = None
+    average_rating: Optional[float] = None
 
 
 class SearchResponse(BaseModel):
